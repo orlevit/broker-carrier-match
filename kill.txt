@@ -1,0 +1,55 @@
+# Property Insurance Appetite Guide
+
+## Overview
+Target Total Insured Value (TIV): Under $250 million
+
+## Target Classes
+
+### Manufacturing and Industrial
+* Tough Manufacturing/LRO accounts
+* Warehousing operations
+* Recyclers
+* Woodworkers (minimum premium threshold of $100,000)
+* Metal working/forging operations (excluding foundry/casting)
+
+### Real Estate
+* Vacant properties (excluding unsprinklered wood frame)
+* Habitational high-rises
+* Select low-rise buildings (non-frame construction)
+
+### Special Risk Areas
+* Wildfire exposed risks in:
+  * California
+  * Colorado
+  * New Mexico
+  * Nevada
+  * Arizona
+* Monoline Flood (excluding Tier 1 locations)
+  * Will consider: Midtown Manhattan and other NYC boroughs
+  * Will not consider: Jones Beach, Jersey Shore, Red Hook
+
+## Conditional Classes
+The following will be considered on a case-by-case basis:
+* Food and Agriculture operations
+* Other classes not specifically excluded below
+
+## Excluded Classes
+
+### Geographic/Peril Restrictions
+* Wind/Flood exposure in Tier 1 counties south of Virginia
+* California and Pacific Northwest Earthquake exposure
+
+### Construction/Occupancy
+* Glass manufacturing
+* Foam manufacturing
+* Grain silos
+* Foundries and casting operations
+* Unsprinklered frame habitational
+* Frame habitational in Texas/Oklahoma
+
+## Key Underwriting Considerations
+* Strong preference for sprinklered properties
+* Heightened scrutiny for wildfire exposure
+* Frame habitational is generally not targeted
+  * Starting rate of 0.40 on frame habitational for primary $5mm
+* Tier 1 wind exposure is declined

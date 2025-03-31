@@ -1,0 +1,62 @@
+You are expert data engineer and data scientist.
+Your task is to build a vectordb for appetite guides.
+Task Requirements
+Core Functionality
+Document Processing
+Ingest and process the provided carrier appetite guides
+Implement an effective chunking strategy
+Store embeddings in a vector database 
+The data is one file name: 'guide.json', which have data like:
+[{
+    "carrier_name": "Moxie",
+    "guide": "# Moxie Habitational Insurance Appetite Guide\n\n## Overview\n\nMoxie offers comprehensive Habitational Insurance coverage for apartment buildings.\n\n## Availability\n\n- Available in AZ, CA, NV, OR, and WA for Apartments\n\n## Capacity\n\n- Up to $15 million Total Insured Value (TIV) for any one location\n- 2/4 General Liability Limits\n  - Subject to approval on larger accounts over $10,000 in premium\n\n## Eligibility Criteria\n\n- Minimum Premium starting at $2,500\n- No age restriction on buildings\n- Buildings must not be on historical registry\n\n## Target Classes\n\n- Apartment buildings\n\n## Submission Requirements\n\n1. ACORD application\n2. Moxie Supplemental Questionnaire\n3. Statement of Values (SOV) in Excel Format if multiple buildings or locations\n4. Five-year currently valued loss history and claims\n"
+  },
+  {
+    "carrier_name": "Semsee",
+    "guide": "# Evolve Vacant Property Coverage Appetite Guide\n\n## Overview\nWe offer Vacant Property coverage across all states, with varying limits based on construction type.\n\n## Geographic Coverage\n- Available in all states\n\n## Coverages\n- Physical Loss or Damage (excluding flood and earthquake)\n- Fire and Allied Perils\n\n## Policy Limits by Construction Type\n- Masonry Non-Combustive: $1,500,000\n- Joisted Masonry: $1,000,000\n- Frame: $500,000\n\n## Additional Notes\n- Coverage excludes flood and earthquake\n- Limits are specific to construction type, demonstrating a tiered approach to risk"
+  }, ...]
+Create the block in the vectordb in the foloowing way:
+Since the carrier appetite, has herarcical strucate, embed every bullet point with the addition previous headers. In addition embed each section. 
+For example, the following text:
+# Header1
+header text1
+## subHeader1
+* subHeader1 text1
+## subHeader2
+* subHeader2 text1
+* subHeader2 text2
+
+should be embedded in the following ways:
+section1:
+# Header1
+header text1
+## subHeader1
+* subHeader1 text1
+## subHeader2
+* subHeader2 text1
+* subHeader2 text2
+
+section2:
+# Header1
+header text1
+## subHeader1
+* subHeader1 text1
+
+section3:
+# Header1
+header text1
+## subHeader2
+* subHeader2 text1
+* subHeader2 text2
+
+section4:
+# Header1
+header text1
+## subHeader2
+* subHeader2 text1
+
+section5:
+# Header1
+header text1
+## subHeader2
+* subHeader2 text2
