@@ -1,31 +1,11 @@
 import json
 import logging
-import os
-from re import TEMPLATE
-from typing import Dict, List, Any, Tuple, Optional
-from config import FAIL_USER_PROMPT, Q_BASE_USER_PROMPT, Q_SYSTEM_PROMPT, TEMPERATURE
-import openai
-from chromadb.utils import embedding_functions
+from typing import Dict, List, Any
+from config import Q_BASE_USER_PROMPT, Q_SYSTEM_PROMPT
 from langchain.vectorstores import Chroma
-from langchain.embeddings import OpenAIEmbeddings
 from langchain.embeddings import HuggingFaceEmbeddings  # or OpenAIEmbeddings, etc.
-from config import Q_SYSTEM_PROMPT, Q_BASE_USER_PROMPT
+from config import Q_SYSTEM_PROMPT, Q_BASE_USER_PROMPT, DB_PATH, SECTION_MAP_FILE, DEFAULT_K_TOP_SIMILAR, DEFAULT_MAX_NUM_TOKENS, COLLECTION_NAME
 from llm_api import OpenAiAPI
-
-# Directories and file paths
-DATA_DIR = "data"
-INPUT_DIR = os.path.join(DATA_DIR, "input") 
-OUTPUT_DIR = os.path.join(DATA_DIR, "output") 
-DB_PATH = os.path.join(OUTPUT_DIR, "guide_db")
-CHUNK_RESULTS_FILE = os.path.join(OUTPUT_DIR, "chunks.json")
-STRUCTURED_METADATA_FILE = os.path.join(OUTPUT_DIR, "structured_metadata.json")
-SECTION_MAP_FILE = os.path.join(OUTPUT_DIR, "section_map.json")
-COLLECTION_NAME = 'langchain'
-# Constants for retrieval
-DEFAULT_K_TOP_SIMILAR = 5
-DEFAULT_MAX_NUM_TOKENS = 4000
-GPT_METADATA_MODEL = "gpt-4"
-GPT_SUMMARY_MODEL = "gpt-3.5-turbo"
 
 # Configure logging
 logging.basicConfig(
@@ -41,9 +21,7 @@ logger = logging.getLogger("document_retriever")
 class DocumentRetriever:
     def __init__(
         self,
-        db_path: str = DB_PATH,
         section_map_path: str = SECTION_MAP_FILE,
-        openai_api_key: str = None,
         k_top_similar: int = DEFAULT_K_TOP_SIMILAR,
         max_num_tokens: int = DEFAULT_MAX_NUM_TOKENS
     ):
@@ -166,10 +144,10 @@ class DocumentRetriever:
         # If metadata filter was successfully created
         if metadata_filter:
             # Use the direct ChromaDB client for metadata filtering
-            metadata_results = self.vectordb.query(
-                query_texts=[user_question],
-                where=metadata_filter,
-                n_results=self.k_top_similar * 2  # Get more to check for non-consecutive
+            metadata_results = self.vectordb.similarity_searc(
+                query=user_question,
+                filter=metadata_filter,
+                k=self.k_top_similar * 2  # Get more to check for non-consecutive
             )
             
             metadata_doc_ids = metadata_results.get("ids", [[]])[0]
@@ -303,7 +281,7 @@ class DocumentRetriever:
                 consolidated_text += f"\n\n--- {carrier_name} Policy Document ---\n\n"
                 
                 # Add a summary
-                summary = self._generate_summary(sections[full_doc_section]["content"])
+                summary = self.opeani_api.summary(sections[full_doc_section]["content"])
                 consolidated_text += f"Summary: {summary}\n\n"
                 
                 consolidated_text += sections[full_doc_section]["content"]
@@ -322,7 +300,7 @@ class DocumentRetriever:
                     ])
                     
                     # Add a summary
-                    summary = self._generate_summary(all_section_text)
+                    summary = self.opeani_api.summary(all_section_text)
                     consolidated_text += f"Summary: {summary}\n\n"
                     
                     consolidated_text += all_section_text
@@ -374,44 +352,13 @@ class DocumentRetriever:
         
         return filtered_sections
     
-    def _generate_summary(self, text: str, max_length: int = 200) -> str:
-        """
-        Generate a short summary of the document text.
-        
-        Args:
-            text: The document text to summarize
-            max_length: Maximum length of summary in characters
-            
-        Returns:
-            A summary string
-        """
-        # Use OpenAI to generate a summary
-        response = openai.ChatCompletion.create(
-            model=GPT_SUMMARY_MODEL,
-            messages=[
-                {"role": "system", "content": "Generate a brief summary of the following insurance policy text in 1-2 sentences."},
-                {"role": "user", "content": text[:4000]}  # Limit input size
-            ],
-            temperature=TEMPERATURE,
-            max_tokens=100
-        )
-        
-        summary = response.choices[0].message.content.strip()
-        if len(summary) > max_length:
-            summary = summary[:max_length - 3] + "..."
-        
-        return summary
-
-
 # Example usage
 if __name__ == "__main__":
 
     retriever = DocumentRetriever(
-        db_path=DB_PATH,
         section_map_path=SECTION_MAP_FILE, 
         k_top_similar=DEFAULT_K_TOP_SIMILAR,
-        max_num_tokens=DEFAULT_MAX_NUM_TOKENS,
-        openai_api_key=openai.api_key
+        max_num_tokens=DEFAULT_MAX_NUM_TOKENS
     )
     
     user_question = "In which regions carrier supplies services, which cover houses damaged by Flood?"

@@ -20,7 +20,11 @@ DEFAULT_K_TOP_SIMILAR = 5
 DEFAULT_MAX_NUM_TOKENS = 4000
 OPENAI_MODEL = "gpt-4-turbo"
 
-# Appetite guide prompts
+# prompts
+## summpary prompt
+SUMMARY_SYSTEM =  "Generate a brief summary of the following insurance policy text in 1-2 sentences."
+
+## Appetite guide prompts
 APETITE_SYSTEM_PROMPT = (
     "You are an insurance domain expert who extracts structured metadata from "
     "carrier appetite guides. Extract information ONLY from the provided text. "
@@ -61,7 +65,7 @@ Extract this information into a structured JSON with the exact following schema:
     - If you're unsure, set a field to None instead
 - Return only the JSON with no additional explanation.
     """
-# User question prompt
+## User question prompt
 Q_SYSTEM_PROMPT = ("You are a metadata extraction tool. Your task is to analyze a user question and extract potential metadata"
     "Extract information ONLY from the provided text. "
     "Do not infer additional information. If a requested field is not explicitly "
