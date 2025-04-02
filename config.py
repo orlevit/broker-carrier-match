@@ -1,13 +1,20 @@
 import os
 
 # Directories
-DATA_DIR = "data"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
 INPUT_DIR =os.path.join(DATA_DIR, "input") 
 OUTPUT_DIR =os.path.join(DATA_DIR, "output") 
+LOGS_DIR =os.path.join(OUTPUT_DIR, "logs") 
 DB_PATH = os.path.join(OUTPUT_DIR, "guide_db")
+
+# Files
+INPUT_GUIDE_FILE = os.path.join(INPUT_DIR, "guide.json")
 CHUNK_RESULTS_FILE = os.path.join(OUTPUT_DIR, "chunks.json")
 STRUCTURED_METADATA_FILE = os.path.join(OUTPUT_DIR, "structured_metadata.json")
 SECTION_MAP_FILE = os.path.join(OUTPUT_DIR, "section_map.json")
+APP_LOGS = os.path.join(LOGS_DIR, "app.log")
+
 
 # Hyper-parameters
 COLLECTION_NAME = "docs"

@@ -5,25 +5,14 @@ import re
 import os
 from typing import List, Dict, Any, Tuple
 from langchain.text_splitter import MarkdownHeaderTextSplitter
-from langchain.vectorstores import Chroma
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.docstore.document import Document
-import markdown
-# pyright: reportAttributeAccessIssue=false
-
-import json
-import re
-import os
-from typing import List, Dict, Any, Tuple
-from langchain.text_splitter import MarkdownHeaderTextSplitter
-from langchain.vectorstores import Chroma
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.docstore.document import Document
 import markdown
 from bs4 import BeautifulSoup
 from llm_api import OpenAiAPI
 from logger import logger  # your custom logger
-from config import APETITE_SYSTEM_PROMPT, APETITE_BASE_USER_PROMPT, DB_PATH, CHUNK_RESULTS_FILE, STRUCTURED_METADATA_FILE,SECTION_MAP_FILE,EMBEDDING_MODEL_NAME, MAX_HEADER_DEPTH, COLLECTION_NAME
+from config import APETITE_SYSTEM_PROMPT, APETITE_BASE_USER_PROMPT, DB_PATH, CHUNK_RESULTS_FILE, STRUCTURED_METADATA_FILE,SECTION_MAP_FILE,EMBEDDING_MODEL_NAME, MAX_HEADER_DEPTH, COLLECTION_NAME, INPUT_GUIDE_FILE
 
 class AppetiteGuideVectorDB:
     def __init__(self):
@@ -373,7 +362,6 @@ class AppetiteGuideVectorDB:
             persist_directory=self.db_path
         )
         self.logger.info("Persisting new vector DB to: %s", self.db_path)
-        self.vector_db.persist()
 
     def load_vector_db(self) -> None:
         """
@@ -445,5 +433,5 @@ if __name__ == "__main__":
     app_db = AppetiteGuideVectorDB()
 
     # Build / load the database using your raw guides JSON (e.g. "guide.json")
-    structured_metadata = app_db.build("guide.json")
+    structured_metadata = app_db.build(INPUT_GUIDE_FILE)
     logger.info("Build process completed. Structured metadata keys: %s", list(structured_metadata.keys()))

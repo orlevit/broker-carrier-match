@@ -1,3 +1,4 @@
+inforce metadat structure as returned additoinal
 change emb form hugginface to chagtgpt
 change emb form hugginface in retriever -   39          self.embedding_function = embedding_functions.DefaultEmbeddingFunction()                                                                                                  
 

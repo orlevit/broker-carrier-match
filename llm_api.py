@@ -1,4 +1,6 @@
 import os
+import json
+from typing import Dict, Any
 from config import OPENAI_MODEL, FAIL_USER_PROMPT, TEMPERATURE, SUMMARY_SYSTEM
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -31,9 +33,10 @@ class OpenAiAPI:
             model=self.openai_model,
             messages=messages,
             temperature=TEMPERATURE,
-            response_format={"type": "json_object"},
+            response_format={"type": "text"},
         )
-        return response['choices'][0]['message']['content']
+        return response.choices[0].message.content
+
 
     def extract_metadata_with_openai(self, user_prompt: str, carrier_name: Any = None, max_attempts: int = 5) -> Dict[str, Any]:
             """
@@ -127,7 +130,7 @@ class OpenAiAPI:
                         # Provide some feedback
                         fail_user_prompt = FAIL_USER_PROMPT.format(attempt=attempt,last_error_message=last_error_message, last_response_message=last_response_message)
 
-                        messages = prepare_chatgpt_msg(fail_user_prompt, messages)
+                        messages = self.prepare_chatgpt_msg(fail_user_prompt, messages)
                     
 
             # ---------------------------

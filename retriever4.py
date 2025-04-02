@@ -1,22 +1,11 @@
 import json
-import logging
 from typing import Dict, List, Any
 from config import Q_BASE_USER_PROMPT, Q_SYSTEM_PROMPT
-from langchain.vectorstores import Chroma
-from langchain.embeddings import HuggingFaceEmbeddings  # or OpenAIEmbeddings, etc.
+from langchain_chroma import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings  # or OpenAIEmbeddings, etc.
 from config import Q_SYSTEM_PROMPT, Q_BASE_USER_PROMPT, DB_PATH, SECTION_MAP_FILE, DEFAULT_K_TOP_SIMILAR, DEFAULT_MAX_NUM_TOKENS, COLLECTION_NAME
 from llm_api import OpenAiAPI
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler("retriever.log"),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger("document_retriever")
+from logger import logger
 
 class DocumentRetriever:
     def __init__(
@@ -100,6 +89,7 @@ class DocumentRetriever:
                     # more complex logic depending on how these are stored
                     filter_dict[f"metadata.{field}"] = {"$exists": True}
         
+        __import__('pdb').set_trace()
         logger.info(f"Built filter: {filter_dict}")
         return filter_dict
     
@@ -118,6 +108,7 @@ class DocumentRetriever:
         
         # First get the top K similar documents based on vector similarity using LangChain
         langchain_results = self.vectordb.similarity_search_with_relevance_scores(user_question, k=self.k_top_similar)
+        __import__('pdb').set_trace()
         
         # Extract documents and their metadata from LangChain results
         vector_docs = []
@@ -361,7 +352,7 @@ if __name__ == "__main__":
         max_num_tokens=DEFAULT_MAX_NUM_TOKENS
     )
     
-    user_question = "In which regions carrier supplies services, which cover houses damaged by Flood?"
+    user_question = "In which regions, except arizona,  carrier supplies services, which cover houses damaged by Flood?"
     context = retriever.retrieve(user_question)
     
     print("\nRetrieved Context:")
