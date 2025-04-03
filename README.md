@@ -6,9 +6,9 @@ This project implements a Retrieval-Augmented Generation (RAG) system that helps
 
 1. [Overview](#overview)
 2. [High Level Logic](#high-level-logic)
-3. [Fined Grained Logic](#fine-grained--logic)
-   - [Preprocessing & Vectorstore Creation](#preprocessing--vectorstore-creation:)
-   - [Retrieval](#Retrieval)
+3. [Fined Grained Logic](#fined-grained-logic)
+   - [Preprocessing & Vectorstore Creation](#preprocessing--vectorstore-creation)
+   - [Retrieval](#retrieval)
    - [Consolidation](#consolidation)
    - [Final prompt](#final-prompt)
 4. [Components](#components)
@@ -89,7 +89,7 @@ The  **Document Retrieval**, **Result Consolidation** and  **Response Generation
      - In this case, the score increases by 1 because the word "flood" is present in the document's value.
    - A sanity check logs a warning if documents in the `MOST_SIMILAR_NUM` group do not appear in the `MOST_FILTER_NUM` group, as metadata should carry more information than the regular similarity score.
 
-### **Consolidation:****Consolidation:**
+### **Consolidation:**
    - The two sets of retrieved documents are combined.
    - Duplicate subsections are removed by discarding any subsection that is already included in a higher-level section, thereby reducing redundancy.
    - The consolidated text is truncated to a maximum token count (tokens defined as whole words).
