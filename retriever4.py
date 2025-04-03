@@ -135,7 +135,7 @@ class DocumentRetriever:
         # If metadata filter was successfully created
         if metadata_filter:
             # Use the direct ChromaDB client for metadata filtering
-            metadata_results = self.vectordb.similarity_searc(
+            metadata_results = self.vectordb.similarity_search(
                 query=user_question,
                 filter=metadata_filter,
                 k=self.k_top_similar * 2  # Get more to check for non-consecutive

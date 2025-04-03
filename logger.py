@@ -21,7 +21,7 @@ def setup_logger():
 
     # Define log format
     formatter = colorlog.ColoredFormatter(
-        "%(log_color)s%(asctime)s - %(name)s - %(levelname)s - %(reset)s%(message)s",
+        "%(log_color)s%(asctime)s - %(levelname)s - %(reset)s%(message)s",
         log_colors={
             "DEBUG": "cyan",
             "INFO": "green",

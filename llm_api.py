@@ -1,7 +1,7 @@
 import os
 import json
 from typing import Dict, Any
-from config import OPENAI_MODEL, FAIL_USER_PROMPT, TEMPERATURE, SUMMARY_SYSTEM
+from config import OPENAI_MODEL, FAIL_USER_PROMPT, TEMPERATURE, SUMMARY_SYSTEM, NEEDED_FIELD_NAMES
 from openai import OpenAI
 from dotenv import load_dotenv
 from logger import logger
@@ -46,6 +46,14 @@ class OpenAiAPI:
 
             #base_user_prompt = self.base_user_prompt.format(carrier_name=carrier_name, text=text)
 
+            needed_field_names = [
+                "geographical_region.include",
+                "geographical_region.exclude",
+                "coverage",
+                "capacity",
+                "limit",
+                "Natural_disaster.include",
+                "Natural_disaster.exclude" ]
 
             attempt = 0
             last_error_message = ""
@@ -85,29 +93,19 @@ class OpenAiAPI:
                     if carrier_name is not None:
                         metadata["carrier_name"] = carrier_name
 
-                    # Process null values to ensure required keys are present
-                    for key in [
-                        "geographical_region",
-                        "coverage",
-                        "capacity",
-                        "limit",
-                        "Natural_disaster",
-                    ]:
-                        if key not in metadata or metadata[key] is None:
-                            if key in ["coverage", "capacity", "limit"]:
-                                metadata[key] = None
-                            elif key in ["geographical_region", "Natural_disaster"]:
-                                metadata[key] = {"include": None, "exclude": None}
+                    additoinal_fields_count = len(list(set(metadata.keys()) - set(NEEDED_FIELD_NAMES))) - 1
 
-                    # Ensure nested null values
-                    for nested_key in ["geographical_region", "Natural_disaster"]:
-                        if nested_key in metadata and metadata[nested_key] is not None:
-                            for sub_key in ["include", "exclude"]:
-                                if (
-                                    sub_key not in metadata[nested_key]
-                                    or metadata[nested_key][sub_key] is None
-                                ):
-                                    metadata[nested_key][sub_key] = None
+                    if additoinal_fields_count != 0:
+                        additoinal_fields= [item for item in metadata.keys() if item not in NEEDED_FIELD_NAMES]
+
+                        raise ValueError("There are additional field in the metada dictionary that shoud not be, or the fields have improper name.\n"
+                                         f"The invalid fields names: {additoinal_fields}\n"
+                                         f"there should be only these names: [\"{'" , "'.join(NEEDED_FIELD_NAMES)}\"]")
+
+                    # Process null values to ensure required keys are present
+                    for key in NEEDED_FIELD_NAMES:
+                        if key not in metadata:
+                            metadata[key] = None
 
                     # If we've successfully constructed and validated the dictionary, return it!
                     return metadata
@@ -136,15 +134,10 @@ class OpenAiAPI:
             # ---------------------------
             # Fallback: Return a default
             # ---------------------------
-            self.logger.error(
-                "Failed to parse valid metadata from OpenAI after %d attempts.",
-                max_attempts
-            )
-            return {
-                "carrier_name": carrier_name,
-                "geographical_region": {"include": None, "exclude": None},
-                "coverage": None,
-                "capacity": None,
-                "limit": None,
-                "Natural_disaster": {"include": None, "exclude": None},
-            }
+            self.logger.error( "Failed to parse valid metadata from OpenAI after %d attempts.", max_attempts)
+
+            empty_dict = {}
+            for field in needed_field_names:
+                empty_dict[field] = None
+                
+            return empty_dict

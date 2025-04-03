@@ -12,7 +12,7 @@ import markdown
 from bs4 import BeautifulSoup
 from llm_api import OpenAiAPI
 from logger import logger  # your custom logger
-from config import APETITE_SYSTEM_PROMPT, APETITE_BASE_USER_PROMPT, DB_PATH, CHUNK_RESULTS_FILE, STRUCTURED_METADATA_FILE,SECTION_MAP_FILE,EMBEDDING_MODEL_NAME, MAX_HEADER_DEPTH, COLLECTION_NAME, INPUT_GUIDE_FILE
+from config import APETITE_SYSTEM_PROMPT, APETITE_BASE_USER_PROMPT, DB_PATH, CHUNK_RESULTS_FILE, STRUCTURED_METADATA_FILE,SECTION_MAP_FILE,EMBEDDING_MODEL_NAME, MAX_HEADER_DEPTH, COLLECTION_NAME, INPUT_GUIDE_FILE, NEEDED_FIELD_NAMES
 
 class AppetiteGuideVectorDB:
     def __init__(self):
@@ -253,15 +253,12 @@ class AppetiteGuideVectorDB:
         if chunks:
             full_guide_metadata = chunks[0]["metadata"]
         else:
-            full_guide_metadata = {
-                "carrier_name": carrier_name,
-                "section_number": "1",
-                "geographical_region": {"include": None, "exclude": None},
-                "coverage": None,
-                "capacity": None,
-                "limit": None,
-                "Natural_disaster": {"include": None, "exclude": None},
-            }
+            full_guide_metadata = {}
+            for key in NEEDED_FIELD_NAMES:
+                full_guide_metadata[key] = None
+
+            full_guide_metadata["carrier_name"] = carrier_name
+            full_guide_metadata["section_number"] = 1
 
         return chunks, full_guide_metadata, section_map
 
