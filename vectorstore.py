@@ -423,12 +423,3 @@ class AppetiteGuideVectorDB:
         else:
             self.logger.warning("No structured metadata file found at '%s'.", self.structured_metadata_file)
             return {}
-
-if __name__ == "__main__":
-    logger.info("Starting the appetite guide vector DB build process...")
-    # Initialize the VectorDB from config
-    app_db = AppetiteGuideVectorDB()
-
-    # Build / load the database using your raw guides JSON (e.g. "guide.json")
-    structured_metadata = app_db.build(INPUT_GUIDE_FILE)
-    logger.info("Build process completed. Structured metadata keys: %s", list(structured_metadata.keys()))

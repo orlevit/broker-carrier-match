@@ -335,18 +335,3 @@ class DocumentRetriever:
             filtered_data[sec_num] = record
 
         return filtered_data
-
-
-# Example usage
-if __name__ == "__main__":
-    retriever = DocumentRetriever(
-        section_map_path=SECTION_MAP_FILE,
-        k_top_similar=DEFAULT_K_TOP_SIMILAR,
-        max_num_tokens=DEFAULT_MAX_NUM_TOKENS
-    )
-    
-    user_question = "In which regions, except arizona, does the carrier supply services that cover houses damaged by Flood?"
-    context = retriever.retrieve(user_question)
-    
-    print("\nRetrieved Context:")
-    print(context)
