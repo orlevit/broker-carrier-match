@@ -1,5 +1,6 @@
 import os
 import json
+from types import prepare_class
 from typing import Dict, Any
 from config import OPENAI_MODEL, FAIL_USER_PROMPT, TEMPERATURE, SUMMARY_SYSTEM, NEEDED_FIELD_NAMES
 from openai import OpenAI
@@ -21,13 +22,17 @@ class OpenAiAPI:
         self.openai_client = OpenAI(api_key=openai_api_key)
         self.logger.info("OpenAI client initialized with key from environment.")
 
-    def prepare_chatgpt_msg(self, text, chatgpt_messages):
-        chatgpt_messages.append({"role": "user", "content": text})
+    def prepare_chatgpt_msg(self, text, chatgpt_messages, role="user"):
+        chatgpt_messages.append({"role": role, "content": text})
 
         return chatgpt_messages
 
-    def summary(self, text):
-        messages = [{"role": "system", "content": SUMMARY_SYSTEM}, {"role": "user", "content": text}]
+    def chatgpt_call(self, system_text, user_text):
+        messages = []
+        if (system_text is not None) or (system_text != ""):
+            messages = self.prepare_chatgpt_msg(system_text, messages, role="system")
+            
+        messages = self.prepare_chatgpt_msg(user_text, messages, role="user")
 
         response = self.openai_client.chat.completions.create(
             model=self.openai_model,

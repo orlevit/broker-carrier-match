@@ -113,6 +113,21 @@ You should return a JSON object with the following structure:
     }}"""\
     f"{IMPORTANT_MSG}"
 
+RESPONSE_SYSTEM_PROMPT = "You are a polite and well-articulated insurance expert specializing in carrier appetite guides."
+RESPONSE = """
+Below is a summary of the carrier appetite guide, relevant for answering the user's question:
+
+{summary}
+
+Full context:
+
+{context}
+
+Generate a coherent and accurate response to the following user question:
+
+{user_question}
+"""
+
 FAIL_USER_PROMPT = (
     "The previous attempt to parse valid JSON from the text failed. "
     "(attempt #{attempt}). The error was: {last_error_message} "

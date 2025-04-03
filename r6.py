@@ -1,6 +1,8 @@
 import json
 from typing import Dict, List, Any, Tuple
-from config import Q_BASE_USER_PROMPT, Q_SYSTEM_PROMPT
+
+from langchain_core import documents
+from config import Q_BASE_USER_PROMPT, Q_SYSTEM_PROMPT, SUMMARY_SYSTEM
 from langchain_chroma import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings  # or OpenAIEmbeddings, etc.
 from config import (
@@ -13,8 +15,9 @@ from config import (
     COLLECTION_NAME,
     TOP_FILTER_NUM,
     TOP_SIMILARITY_NUM,
-    TOTAL_TOP_SIMILAR
-
+    TOTAL_TOP_SIMILAR,
+    RESPONSE_SYSTEM_PROMPT,
+    RESPONSE
 )
 from llm_api import OpenAiAPI
 from logger import logger
@@ -58,81 +61,6 @@ class DocumentRetriever:
         self.k_top_similar = k_top_similar
         self.max_num_tokens = max_num_tokens
     
-    def _build_filter_from_metadata(self, metadata: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Build a ChromaDB filter from the extracted metadata.
-        If multiple conditions exist, they will be combined under "$and".
-        Example of final filter for multiple conditions:
-            {
-                "$and": [
-                    {"coverage": {"$in": ["flood"]}},
-                    {"geographical_region.exclude": {"$in": ["arizona"]}}
-                ]
-            }
-        Returns an empty dict if no filters are formed.
-        """
-        sub_filters = []
-        
-        # carrier_name
-        if "carrier_name" in metadata and metadata["carrier_name"]:
-            carrier_val = (
-                [metadata["carrier_name"]]
-                if isinstance(metadata["carrier_name"], str)
-                else metadata["carrier_name"]
-            )
-            sub_filters.append({"carrier_name": {"$in": carrier_val}})
-
-        # coverage
-        if "coverage" in metadata and metadata["coverage"]:
-            coverage_val = (
-                [metadata["coverage"]]
-                if isinstance(metadata["coverage"], str)
-                else metadata["coverage"]
-            )
-            sub_filters.append({"coverage": {"$in": coverage_val}})
-
-        # geographical_region.include
-        if "geographical_region.include" in metadata and metadata["geographical_region.include"]:
-            sub_filters.append({
-                "geographical_region.include": {"$in": metadata["geographical_region.include"]}
-            })
-
-        # geographical_region.exclude
-        if "geographical_region.exclude" in metadata and metadata["geographical_region.exclude"]:
-            sub_filters.append({
-                "geographical_region.exclude": {"$in": metadata["geographical_region.exclude"]}
-            })
-
-        # Natural_disaster.include
-        if "Natural_disaster.include" in metadata and metadata["Natural_disaster.include"]:
-            sub_filters.append({
-                "Natural_disaster.include": {"$in": metadata["Natural_disaster.include"]}
-            })
-
-        # Natural_disaster.exclude
-        if "Natural_disaster.exclude" in metadata and metadata["Natural_disaster.exclude"]:
-            sub_filters.append({
-                "Natural_disaster.exclude": {"$in": metadata["Natural_disaster.exclude"]}
-            })
-
-        # capacity
-        if "capacity" in metadata and metadata["capacity"]:
-            sub_filters.append({"capacity": {"$exists": True}})
-
-        # limit
-        if "limit" in metadata and metadata["limit"]:
-            sub_filters.append({"limit": {"$exists": True}})
-
-        # Combine sub-filters under "$and" if more than one
-        if len(sub_filters) > 1:
-            filter_dict = {"$and": sub_filters}
-        elif len(sub_filters) == 1:
-            filter_dict = sub_filters[0]
-        else:
-            filter_dict = {}
-
-        logger.info(f"Built filter from metadata: {filter_dict}")
-        return filter_dict
     
     
     def _calculate_match_score(self,user_metadata: Dict[str, Any], db_result_metadata: Dict[str, str]) -> int:
@@ -203,18 +131,31 @@ class DocumentRetriever:
 
         return ranked_results
     
+    def _check_top_similarity_not_in_top_filter(self, similarity_sorted, filter_sorted):
+        top_similarity_ids = {doc.id for doc,_,_  in similarity_sorted}
+        top_filter_ids = {doc.id for doc,_,_ in filter_sorted}
+        
+        # Identify document IDs in top_similarity that are not in top_filter
+        mismatch_ids = top_similarity_ids - top_filter_ids
+        if mismatch_ids:
+            logger.warning(f"There {len(mismatch_ids)} documents that are closer than the filter")
+            logger.warning(f"{[ss for id in mismatch_ids for ss in similarity_sorted if ss.id == id]}")
+
     def _get_top_filter_and_similarity(self,ranked_results, top_similarity, top_filter):
+        __import__('ipdb').set_trace()        
         similarity_sorted = sorted(ranked_results, key=lambda x: (x[2], x[1]), reverse=True)[:top_similarity]
         filter_sorted = sorted(ranked_results, key=lambda x: (x[1], x[2]), reverse=True)[:top_filter]
-        
+
+        self._check_top_similarity_not_in_top_filter(similarity_sorted, filter_sorted)
+
         combined = similarity_sorted + filter_sorted
 
 
         unique_by_id = {}
         for doc in combined:
-            doc_id = doc.metadata['id']
+            doc_id = doc[0].id
             if doc_id not in unique_by_id:
-                unique_by_id[doc_id] = doc
+                unique_by_id[doc_id] = doc[0]
 
 
         unique_documents = list(unique_by_id.values())
@@ -241,8 +182,8 @@ class DocumentRetriever:
         user_extracted_metadata = self.opeani_api.extract_metadata_with_openai(user_question_prompt)
         
         # Step 3: get top docs
-        __import__('pdb').set_trace()        
         rank_metadata = self._rank_results_by_match(user_extracted_metadata, langchain_results)
+        __import__('ipdb').set_trace()        
         top_docs = self._get_top_filter_and_similarity(rank_metadata, self.top_similarity_num, self.top_filter_num)
 
         # Step 4: Consolidate the retrieved documents
@@ -255,35 +196,14 @@ class DocumentRetriever:
             logger.info(f"Truncated context to {self.max_num_tokens} tokens.")
         
         # send to openai for response
-        summary = self.opeani_api.summary(sections[full_doc_section]["content"]) sjd foidsaj f----------------------------
-        consolidated_text += f"Summaried context: {summary}\n\nThe context\n\n" + consolidated_text
+        summary = self.opeani_api.chatgpt_call(SUMMARY_SYSTEM, consolidated_text) 
+        llm_full_q = RESPONSE.format(summary=summary, context=consolidated_text, user_question=user_question)
+        response = self.opeani_api.chatgpt_call(RESPONSE_SYSTEM_PROMPT, llm_full_q) 
         
         
-        return consolidated_text
+        return response
     
-    def _check_consecutive_sections(self, section_numbers: List[str], distances: List[float]) -> bool:
-        """
-        Optional check if sections are consecutive by similarity.
-        """
-        paired_data = list(zip(section_numbers, distances))
-        sorted_pairs = sorted(paired_data, key=lambda x: x[1])
-        sorted_sections = [pair[0] for pair in sorted_pairs]
 
-        for i in range(1, len(sorted_sections)):
-            curr_parts = sorted_sections[i].split('.')
-            prev_parts = sorted_sections[i-1].split('.')
-            
-            if len(curr_parts) > 1 and len(prev_parts) > 1:
-                if curr_parts[0] == prev_parts[0]:  # same main section
-                    if len(curr_parts) == len(prev_parts):
-                        if int(curr_parts[-1]) != int(prev_parts[-1]) + 1:
-                            return False
-                    else:
-                        if not (sorted_sections[i].startswith(sorted_sections[i-1]) or 
-                                sorted_sections[i-1].startswith(sorted_sections[i])):
-                            return False
-        
-        return True
     
     def _consolidate_documents(self, l_results: List[Dict[Any, Any]]) -> str:
         """
@@ -291,8 +211,8 @@ class DocumentRetriever:
         Remove subsections if a higher hierarchy section is already included.
         """
         logger.info("Consolidating retrieved documents.")
-        documents = [doc for doc,_ in l_results]
-        metadatas = [doc.metadata for doc,_  in l_results]
+        documents = [doc for doc in l_results]
+        metadatas = [doc.metadata for doc  in l_results]
         # Group by carrier
         carrier_docs = {}
         for doc, metadata in zip(documents, metadatas):
@@ -405,10 +325,6 @@ class DocumentRetriever:
             # If it's a 'section', overshadow all its descendants
             if rec_type == "section":
                 kept_sections.add(sec_num)
-
-            # If it's 'full_doc', we do NOT overshadow by default
-            # (If you want a 'full_doc' to also overshadow deeper sections,
-            #  handle it similarly to 'section'.)
 
         # 4) (Optional) Re-sort 'kept' by the original dictionary order (original_idx)
         kept_sorted = sorted(kept, key=lambda x: x[2])
