@@ -147,7 +147,7 @@ class DocumentRetriever:
             A consolidated context string with the retrieved documents
         """
         logger.info(f"Retrieving documents for question: {user_question}")
-        langchain_results = self.vectordb.similarity_search_with_relevance_scores(user_question, k=self.total_top_similar)
+        langchain_results = self.vectordb.similarity_search_with_scores(user_question, k=self.total_top_similar)
         user_question_prompt = self.user_prompt.format(user_question=user_question)
         user_extracted_metadata = self.opeani_api.extract_metadata_with_openai(user_question_prompt)
         rank_metadata = self._rank_results_by_match(user_extracted_metadata, langchain_results)
