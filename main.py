@@ -11,9 +11,10 @@ if __name__ == "__main__":
 
     logger.info("Build process completed. Structured metadata keys: %s", list(structured_metadata.keys()))
 
+
     user_question = input("Please enter your question: ")
     retriever = DocumentRetriever(section_map_path=SECTION_MAP_FILE, k_top_similar=DEFAULT_K_TOP_SIMILAR, max_num_tokens=DEFAULT_MAX_NUM_TOKENS)
     answer = retriever.retrieve(user_question)
-    
+
     print("\nAnswer:\n")
     print(answer)

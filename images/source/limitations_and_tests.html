@@ -12,10 +12,24 @@
 </head>
 <body>
   <h1>Know limitations & Test cases</h1>
-  <p> These cases were identified within the data and, for each, a synthetic guide was created to serve as a unit test.
+  <p> 
+ <hr>
+  <h2>Know limitations</h2>
+  
+<ul>
+  <li>Embeddings are generated using the all-MiniLM-L6-v2 model, which is comparatively weaker than state-of-the-art embedding models.</li>
+  <li>Highly dependent on the structure of sections and bullet points for chunking (see Test 1 or Figure 1).</li>
+  <li>Information from scattered sections is not directly linked.</li>
+  <li>Since the format is highly varies and due to a lack of domain knowledge, the metadata was extracted by prompting an LLM. Additional keywords/aliases are advised.</li>
+  <li>Metadata values are searched using the condition "is string1 in string2". This loose condition can yield unexpected results (e.g., "covered" is inside "not covered").</li>
+  <li>The assumption that metadat "is string1 in string2" scoreing bares more weight than cosine score, is tested "by-the-eye" and needed more rigorous analysis.</li>
+</ul>
+
+  <h2>Tests</h2>
  <hr>
   <h3>Case 1:</h3><br>
   <p>Information exists in different sections (<span style="color:yellow">##</span>). Therefore, section splitting technique can be incomplete, and information retrieval can be difficult. For exmpale  <span style="color:red">Limit</span> is existsed in multiple sections. </p>
+ <h4>Example:</h4>
   <p> 
 # Denali Investment Property Insurance Program Guide<br>
 <br>
@@ -35,10 +49,23 @@
   - Hired/Non-Owned Auto: $1M<br>
 </p>
   <br>
+ 
+ <hr style="width: 50%; margin: 20px auto; border: none; height: 2px; background-color: #f0f0f0;">
+<h3>Examination 1:</h3><br>
+Setup
+<ul>
+  <li>The total retrieved documents was restricted to 4 (as number of bullets).</li>
+  <li>Highly focused quesiton on both targeted both section was asked.</li>
+</ul>
+<span style="color:green">Question:</span> What is the limit of commercial liability for single building ? please target Denal.<br>
+ <span style="color:green">Answer:</span> The "Denali" Investment Property Insurance Program specifies a maximum coverage limit of $5.0 million for a single building. This limit encompasses the total amount available for coverage under this particular program for any single building insured through Denali. If you have any more specific questions or need further details, feel free to ask! <br>
+<span style="color:green">Conclusion:</span> The system do not recognized the confusion, perhaps due to the embedding method.<br>
  <hr>
   <h3>Case 2:</h3><br>
-  <p>There is a contradiction (or at least a potentially confusing inconsistency) . For example <span style="color:red">Vacant</span> buildings are seem to be within the program’s target appetite (In <span style="color:yellow">Coverage</span> section). However later it is mentioned that vacant properties are not automatically eligible (In <span style="color:yellow">Requiring Referral</span> section).
-  
+  <p>There is a contradiction (or at least a potentially confusing inconsistency) . For example <span style="color:red">Vacant</span> buildings are seem to be within the program’s target appetite (In <span style="color:yellow">Coverage</span> section). However later it is mentioned that vacant properties are not automatically eligible (In <span style="color:yellow">Requiring Referral</span> section).<br>
+
+
+<h4>Example:</h4>
   # Denali Investment Property Insurance Program Guide<br>
 <br>
 ## Overview<br>
@@ -52,7 +79,53 @@
 ### Property<br>
 ...<br>
 - <span style="color:red">Vacant</span> Buildings<br>
-</p>
-<p> There indicates that vacant properties are within the program’s target appetite
+ <hr style="width: 50%; margin: 20px auto; border: none; height: 2px; background-color: #f0f0f0;">
+
+<h3>Examination 2:</h3><br>
+Setup
+<ul>
+  <li>The total retrieved documents was restricted to 2 (the two ambiguous sections).</li>
+</ul>
+<span style="color:green"> Question:</span> Does vacant covered in Denali?<br>
+ <span style="color:green">Answer:</span> Yes, the Denali Investment Property Insurance Program does cover vacant buildings, but they are considered a special condition that requires referral. This means that if you have a vacant building, you will need to discuss it specifically with the insurer to determine eligibility and coverage details under the Denali policy. This information is outlined in section 1.3.4 of their policy guide.
+ <br>
+<span style="color:green"> Conclusion:</span> The system manage to make sense of confusing information across sifferent sections.<br>
+ 
+  <hr>
+<h3>Case 3:</h3><br>
+<br>
+Various questions
+
+<h4>Question 1:</h4>
+<ul>
+  <li><span style="color:green"> Question:</span> Which carriers provide coverage in Arizona?</li>
+  <li><span style="color:green"> Answer:</span> In Arizona, you have a couple of insurance carrier options based on the provided carrier appetite guides:
+
+1. **Convex Insurance**: This carrier specifically targets properties at risk of wildfires in several states including Arizona. They offer coverage for wildfire-exposed risks and consider flood risks, excluding Tier 1 locations. However, it's important to note that they have specific exclusions for certain areas, but these do not affect Arizona.
+
+2. **Lynx Insurance**: Lynx offers a broad coverage across all 50 states, including Arizona. Their policies are based on an ISO form with proprietary endorsements and are available on a ground-up or primary basis. Lynx focuses on various business classes such as manufacturing, real estate, and more, making it a versatile option for different types of properties and businesses in Arizona.
+
+Both carriers provide distinct types of coverage that could suit different needs depending on the specific risks and business classes involved.</li>
+<il><span style="color:green"> Conclusion:</span> Good answer howvere, it seems to be in small context, due the number of retrived documents as truncation of the number of tokens.</li>
+</li>
+</ul>
+<h4>Question 2:</h4>
+<ul>
+  <li><span style="color:green">Question:</span> Find carriers that write apartment buildings with limits over $10M</li>
+  <li><span style="color:green">Answer:</span> Based on the information provided in the carrier appetite guides for both the "Lynx" and "Denali" insurance policies, neither carrier would be suitable for providing coverage for apartment buildings with limits over $10 million.
+
+The "Lynx" Property Insurance policy offers a maximum loss limit of up to $10 million for primary coverage when building values are under $25 million. This limit does not meet your requirement for coverage over $10 million.
+
+The "Denali" Investment Property Insurance program specifically targets apartments with fewer than 25 units and offers a maximum single building limit of $5 million. This limit is also below the threshold you are looking for.
+
+Therefore, you may need to explore other insurance carriers or programs that specialize in higher coverage limits for apartment buildings exceeding $10 million.
+<li>
+<il><span style="color:green">Conclusion:</span> Insufficent response, as previous, it seems that the context is too small.
+</li>
+</ul>
+
+
+
+ 
 </body>
 </html>
