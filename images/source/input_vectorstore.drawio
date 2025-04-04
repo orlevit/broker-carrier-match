@@ -37,10 +37,10 @@
         <mxCell id="WaHUGSGva5hsZ7IWW-n7-20" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;strokeColor=light-dark(#000000,#25A16A);" parent="WaHUGSGva5hsZ7IWW-n7-36" vertex="1">
           <mxGeometry x="122" width="18" height="242" as="geometry" />
         </mxCell>
-        <mxCell id="WaHUGSGva5hsZ7IWW-n7-26" value="Section &quot;1.1&quot;, Type:&quot;section&quot;" style="whiteSpace=wrap;html=1;align=center;strokeColor=#C81E57;rounded=1;fillColor=default;strokeWidth=4;fillStyle=auto;" parent="WaHUGSGva5hsZ7IWW-n7-36" vertex="1">
+        <mxCell id="WaHUGSGva5hsZ7IWW-n7-26" value="Section &quot;1.1&quot;, Type:&quot;bullet&quot;" style="whiteSpace=wrap;html=1;align=center;strokeColor=#C81E57;rounded=1;fillColor=default;strokeWidth=4;fillStyle=auto;" parent="WaHUGSGva5hsZ7IWW-n7-36" vertex="1">
           <mxGeometry y="13" width="120" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="WaHUGSGva5hsZ7IWW-n7-33" value="section: &quot;1.1&quot;&lt;div&gt;Type:&quot;bullet&quot;&lt;/div&gt;" style="whiteSpace=wrap;html=1;align=center;strokeColor=#0F9F60;rounded=1;fillColor=default;strokeWidth=4;fillStyle=auto;" parent="WaHUGSGva5hsZ7IWW-n7-36" vertex="1">
+        <mxCell id="WaHUGSGva5hsZ7IWW-n7-33" value="section: &quot;1.1&quot;&lt;div&gt;Type:&quot;section&quot;&lt;/div&gt;" style="whiteSpace=wrap;html=1;align=center;strokeColor=#0F9F60;rounded=1;fillColor=default;strokeWidth=4;fillStyle=auto;" parent="WaHUGSGva5hsZ7IWW-n7-36" vertex="1">
           <mxGeometry y="52" width="120" height="32" as="geometry" />
         </mxCell>
         <mxCell id="WaHUGSGva5hsZ7IWW-n7-34" value="section: &quot;1&quot;&lt;div&gt;Type:&quot;Full_doc&quot;&lt;/div&gt;" style="whiteSpace=wrap;html=1;align=center;strokeColor=#000000;rounded=1;fillColor=default;strokeWidth=4;fillStyle=auto;" parent="WaHUGSGva5hsZ7IWW-n7-36" vertex="1">
