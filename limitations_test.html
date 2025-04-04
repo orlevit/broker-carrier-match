@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      background-color: #1e1e2f;  /* Dark background */
+      color: #f0f0f0;             /* Light font color */
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <h1>Know limitations & Test cases</h1>
+  <p> These cases were identified within the data and, for each, a synthetic guide was created to serve as a unit test.
+ <hr>
+  <h3>Case 1:</h3><br>
+  <p>Information exists in different sections (<span style="color:yellow">##</span>). Therefore, section splitting technique can be incomplete, and information retrieval can be difficult. For exmpale  <span style="color:red">Limit</span> is existsed in multiple sections. </p>
+  <p> 
+# Denali Investment Property Insurance Program Guide<br>
+<br>
+<span style="color:yellow">##</span>  Overview<br>
+...<br>
+<br>
+## Key Coverage Parameters<br>
+- Maximum Single Building <span style="color:red">Limit</span>: $5.0M<br>
+<br>
+<span style="color:yellow">##</span> Coverage Types<br>
+...<br>
+### Commercial General Liability<br>
+...<br>
+- <span style="color:red">Limits</span>:<br>
+  - General Liability: $1M/$2M/$2M<br>
+  - Employee Benefits: $1M/$2M<br>
+  - Hired/Non-Owned Auto: $1M<br>
+</p>
+  <br>
+ <hr>
+  <h3>Case 2:</h3><br>
+  <p>There is a contradiction (or at least a potentially confusing inconsistency) . For example <span style="color:red">Vacant</span> buildings are seem to be within the program’s target appetite (In <span style="color:yellow">Coverage</span> section). However later it is mentioned that vacant properties are not automatically eligible (In <span style="color:yellow">Requiring Referral</span> section).
+  
+  # Denali Investment Property Insurance Program Guide<br>
+<br>
+## Overview<br>
+...<br>
+## <span style="color:yellow">Coverage</span> Types<br>
+### Commercial Property Coverage<br>
+...<br>
+  - <span style="color:red">Vacant</span> Properties<br>
+<br>
+## Special Conditions <span style="color:yellow">Requiring Referral</span><br>
+### Property<br>
+...<br>
+- <span style="color:red">Vacant</span> Buildings<br>
+</p>
+<p> There indicates that vacant properties are within the program’s target appetite
+</body>
+</html>
