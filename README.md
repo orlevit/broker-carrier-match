@@ -17,8 +17,8 @@ This project implements a Retrieval-Augmented Generation (RAG) system that helps
    - [Prerequisites](#prerequisites)
    - [Installation](#installation)
 7. [Tools & Technologies](#tools--technologies)
-8. [Limtations & Tests](#limitations--tests)
-8. [License](#license)
+8. [Limitations & Tests](#limitations--tests)
+9. [License](#license)
 
 ## Overview
 
@@ -164,11 +164,9 @@ python main.py
 - **Chroma**
 - **Python**
 
-## Limtations & Tests
+## Limitations & Tests
 [Limitations and Tests](https://htmlpreview.github.io/?https://github.com/orlevit/broker-carrier-match/blob/main/images/source/limitations_and_tests.html)
 
-
-https://github.com/orlevit/broker-carrier-match/tree/main/images/source/limitations_and_tests.html
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
