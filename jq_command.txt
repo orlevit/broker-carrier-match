@@ -1,1 +1,0 @@
-cat guide.json | jq -r '.[0]| {guide: .guide} | .guide ' | sed 's/\(CAT\)/\x1b[31m\1\x1b[0m/g'
