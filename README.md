@@ -34,7 +34,7 @@ The system takes carrier appetite guides, splits them into structured chunks wit
 2. **Metadata Extraction:**  
    Each chunk is processed to extract key metadata, which is stored in a structured format.
 
-The  **Input Processing** and **Metadata Extraction** are illustrated conceptually in ![Figure 1: Input Processing and Metadata Extraction](images/input_vectorstore.drawio.png).
+The  **Input Processing** and **Metadata Extraction** are illustrated conceptually in ![Figure 1: Input Processing and Metadata Extraction](images/input_vectorstore.drawio.gif).
 
 3. **Document Retrieval:**  
    When a user asks a question, the system extracts similar metadata from the question and performs two kinds of searches in the vectorstore:
@@ -47,7 +47,7 @@ The  **Input Processing** and **Metadata Extraction** are illustrated conceptual
 5. **Response Generation:**  
    The consolidated text and its summary, along with the system prompt and user question, are sent to the LLM to generate the final answer.
    
-The **Document Retrieval**, **Result Consolidation** and  **Response Generation** are illustrated conceptually in ![Figure 2: Document Retrieval, Result Consolidation, and Response Generation](images/vectorstore_output.drawio.png).
+The **Document Retrieval**, **Result Consolidation** and  **Response Generation** are illustrated conceptually in ![Figure 2: Document Retrieval, Result Consolidation, and Response Generation](images/vectorstore_output.drawio.gif).
 
 ---
 
