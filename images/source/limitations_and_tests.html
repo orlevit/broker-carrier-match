@@ -11,14 +11,17 @@
   </style>
 </head>
 <body>
-  <h1>Known limitations & Test cases</h1>
+  <div style="text-align:center">
+<h1>Known limitations & Test cases</h1>
+</div>
+
   <p> 
- <hr>
+
   <h2>Known limitations</h2>
-  
+ <hr>
 <ul>
   <li>Embeddings are generated using the all-MiniLM-L6-v2 model, which is comparatively weaker than state-of-the-art embedding models.</li>
-  <li>Highly dependent on the structure of sections and bullet points for chunking (see Test 1 or Figure 1).</li>
+  <li>Highly dependent on the structure of sections and bullet points for chunking (see Case 1 or Figure 1).</li>
   <li>Information from scattered sections is not directly linked.</li>
   <li>Since the format is highly varies and due to a lack of domain knowledge, the metadata was extracted by prompting an LLM. Additional keywords/aliases are advised.</li>
   <li>Metadata values are searched using the condition "is string1 in string2". This loose condition can yield unexpected results (e.g., "covered" is inside "not covered").</li>
