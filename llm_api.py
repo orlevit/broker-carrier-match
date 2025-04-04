@@ -76,7 +76,7 @@ class OpenAiAPI:
                 additoinal_fields_count = len(list(set(metadata.keys()) - set(NEEDED_FIELD_NAMES))) - 1
                 if additoinal_fields_count != 0:
                     additoinal_fields = [item for item in metadata.keys() if item not in NEEDED_FIELD_NAMES]
-                    raise ValueError("There are additional field in the metada dictionary that shoud not be, or the fields have improper name.\n"
+                    raise ValueError("There are additional field in the metada dictionary that should not be, or the fields have improper name.\n"
                                      f"The invalid fields names: {additoinal_fields}\n"
                                      f"there should be only these names: [\"{'" , "'.join(NEEDED_FIELD_NAMES)}\"]")
                 for key in NEEDED_FIELD_NAMES:
